@@ -1,0 +1,63 @@
+/* Fullscreen intro background */
+/* Fullscreen intro background */
+.intro-screen {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+
+    /* Fix: Gradient background covering full page */
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+
+/* Card container for intro content */
+.intro-card {
+  background: #fff;
+  border-radius: 25px;
+  max-width: 380px;
+  width: 90%;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+/* Logo / medical icon */
+.logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  animation: pulse 3s infinite;
+  margin-bottom: 1.2rem;
+}
+
+/* Animated pulse effect */
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.08); }
+}
+
+/* Button actions area */
+.intro-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Feature cards */
+.feature-card {
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}

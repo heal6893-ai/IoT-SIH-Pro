@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center mt-5">
+  <h2>Intro 2</h2>
+  <p>More information here.</p>
+  <a class="btn btn-primary" href="{{ url_for('intro3') }}">Next</a><br><br>
+  <a class="btn btn-link" href="{{ url_for('finish_intro') }}">Skip</a>
+</div>
+{% endblock %}
+
