@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Healixa Intro</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    /* ✅ Common intro screen */
+    .intro-screen {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 1s ease, visibility 1s ease;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .intro-screen.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* ✅ Intro1 circular logo */
+    #intro1 {
+      background: linear-gradient(135deg, #ffffff, #ffffff);
+    }
+    #intro1 img {
+      width: 150px;
+      height: 150px;
+      
+      object-fit: cover;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+      opacity: 0;
+      transform: scale(0.5);
+      animation: fadeZoom 2s ease-in-out forwards;
+    }
+
+    @keyframes fadeZoom {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* ✅ Text styling */
+    .content {
+      text-align: center;
+      color: white;
+      padding: 0 20px;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      font-style: oblique;
+    }
+    p {
+      font-size: 1.3rem;
+      line-height: 1.5;
+    }
+
+    /* ✅ Backgrounds for intro2 & intro3 */
+    #intro2 {
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+    }
+    #intro3 {
+      background: linear-gradient(135deg, #43e97b, #38f9d7);
+    }
+  </style>
+</head>
+<body>
+  <!-- Intro1 -->
+  <!-- Intro1 Section with Debugging -->
+<section id="intro1" class="intro-screen active">
+  <img src="logo1.jpeg" alt="Logo">
+</section>
+
+
+  <!-- Intro2 -->
+  <section id="intro2" class="intro-screen">
+    <div class="content">
+      <h1>Welcome to Viora</h1>
+      <p>Your AI-powered health assistant</p>
+    </div>
+  </section>
+
+  <!-- Intro3 -->
+  <section id="intro3" class="intro-screen">
+    <div class="content">
+      <h1>Track • Learn • Stay Healthy</h1>
+      <p>Smart disease insights and preventive care at your fingertips.</p>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const intro1 = document.getElementById("intro1");
+      const intro2 = document.getElementById("intro2");
+      const intro3 = document.getElementById("intro3");
+
+      // Step 1: Intro1 → Intro2
+      setTimeout(() => {
+        intro1.classList.remove("active");
+        intro2.classList.add("active");
+      }, 3500);
+
+      // Step 2: Intro2 → Intro3
+      setTimeout(() => {
+        intro2.classList.remove("active");
+        intro3.classList.add("active");
+      }, 7000);
+
+      // Step 3: Intro3 → Login page
+      setTimeout(() => {
+        window.location.href = "login.html"; // Flask route
+      }, 10500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center mt-5">
+  <h2 class="text-info">Analog</h2>
+  <p>Charts and Analog will be displayed here.</p>
+</div>
+{% endblock %}
+
+
+<div class="card col-span-1 lg:col-span-3">
+  <h3 class="text-lg font-medium mb-3">📊 Analysis</h3>
+
+  <div class="flex gap-4">
+    <div class="w-1/2">
+      <canvas id="temperatureTrend"></canvas>
+    </div>
+    <div class="w-1/2">
+      <canvas id="bacteriaTrend"></canvas>
+    </div>
+  </div>
+
+  <div class="mt-4 grid grid-cols-2 gap-4">
+    <div class="card p-3">
+      <h4 class="font-medium">Temperature Stats</h4>
+      <p>Avg: <span id="tempAvg">--</span> °C</p>
+      <p>Max: <span id="tempMax">--</span> °C</p>
+      <p>Min: <span id="tempMin">--</span> °C</p>
+    </div>
+    <div class="card p-3">
+      <h4 class="font-medium">Bacteria Stats</h4>
+      <p>Avg: <span id="bactAvg">--</span> CFU/mL</p>
+      <p>Max: <span id="bactMax">--</span> CFU/mL</p>
+      <p>Min: <span id="bactMin">--</span> CFU/mL</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-gauge"></script>
+
+<script src="analys.js"></script>
