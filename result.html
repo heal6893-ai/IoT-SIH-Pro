@@ -2,122 +2,163 @@
 <html lang="en">
 
 <head>
-    <!-- Meta Tags -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
-    <!-- Title -->
-    <title>{% block title %}Sensor Analysis Result{% endblock %}</title>
-
-    <!-- Link to your stylesheets (Tailwind or custom) -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-    <!-- Additional meta or link tags can go here (like Open Graph for social media previews) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sensor Analysis Result</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-900 text-white font-sans antialiased">
-    <div class="container mx-auto mt-8 p-6">
-        {% block content %}
-        <h2 class="text-3xl font-bold text-center text-blue-500 mb-10">
-            ✅ Sensor Analysis Result
-        </h2>
+  <div class="container mx-auto mt-8 p-6">
 
-        <!-- Summary Cards with Trend Indicators -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <!-- Temperature Card -->
-            <div class="card p-6 bg-gray-800 rounded-xl shadow hover:scale-105 transition-transform duration-300">
-                <h3 class="text-lg font-semibold mb-2 text-white">🌡 Temperature</h3>
-                <p class="text-3xl font-bold text-blue-400">{{ temp_avg }} °C</p>
-                <p class="text-gray-400 text-sm">Average (selected period)</p>
-                <p class="mt-2 text-green-400 text-sm">
-                    <span class="font-semibold">Max:</span> {{ temp_max }} °C
-                    &nbsp;|&nbsp;
-                    <span class="font-semibold">Min:</span> {{ temp_min }} °C
-                </p>
-            </div>
+    <h2 class="text-3xl font-bold text-center text-blue-500 mb-10">
+      ✅ Sensor Analysis Result
+    </h2>
 
-            <!-- Bacteria Card -->
-            <div class="card p-6 bg-gray-800 rounded-xl shadow hover:scale-105 transition-transform duration-300">
-                <h3 class="text-lg font-semibold mb-2 text-white">🧫 Bacteria Level</h3>
-                <p class="text-3xl font-bold text-red-400">{{ bact_avg }} CFU/mL</p>
-                <p class="text-gray-400 text-sm">Average count detected</p>
-                <p class="mt-2 text-green-400 text-sm">
-                    <span class="font-semibold">Max:</span> {{ bact_max }}
-                    &nbsp;|&nbsp;
-                    <span class="font-semibold">Min:</span> {{ bact_min }}
-                </p>
-            </div>
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <!-- Temperature Card -->
+      <div class="card p-6 bg-gray-800 rounded-xl shadow hover:scale-105 transition-transform duration-300">
+        <h3 class="text-lg font-semibold mb-2 text-white">🌡 Temperature</h3>
+        <p id="temp_avg" class="text-3xl font-bold text-blue-400"></p>
+        <p class="text-gray-400 text-sm">Average (selected period)</p>
+        <p class="mt-2 text-green-400 text-sm">
+          <span class="font-semibold">Max:</span> <span id="temp_max"></span> °C
+          &nbsp;|&nbsp;
+          <span class="font-semibold">Min:</span> <span id="temp_min"></span> °C
+        </p>
+      </div>
 
-            <!-- Water Quality Card -->
-            <div class="card p-6 bg-gray-800 rounded-xl shadow hover:scale-105 transition-transform duration-300">
-                <h3 class="text-lg font-semibold mb-2 text-white">💧 Water Quality</h3>
-                <p class="text-3xl font-bold text-green-400">{{ quality_status }}</p>
-                <p class="text-gray-400 text-sm">Overall assessment based on all parameters</p>
-            </div>
-        </div>
+      <!-- Bacteria Card -->
+      <div class="card p-6 bg-gray-800 rounded-xl shadow hover:scale-105 transition-transform duration-300">
+        <h3 class="text-lg font-semibold mb-2 text-white">🧫 Bacteria Level</h3>
+        <p id="bact_avg" class="text-3xl font-bold text-red-400"></p>
+        <p class="text-gray-400 text-sm">Average count detected</p>
+        <p class="mt-2 text-green-400 text-sm">
+          <span class="font-semibold">Max:</span> <span id="bact_max"></span>
+          &nbsp;|&nbsp;
+          <span class="font-semibold">Min:</span> <span id="bact_min"></span>
+        </p>
+      </div>
 
-        <!-- Detailed Metrics Table -->
-        <div class="overflow-x-auto mb-10">
-            <table class="table-auto w-full border-collapse bg-gray-900 rounded-lg shadow">
-                <thead>
-                    <tr class="bg-gray-700 text-gray-200 uppercase text-sm tracking-wide">
-                        <th class="p-3 border-b">Parameter</th>
-                        <th class="p-3 border-b">Average</th>
-                        <th class="p-3 border-b">Min</th>
-                        <th class="p-3 border-b">Max</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-300">
-                    <tr class="hover:bg-gray-800">
-                        <td class="p-3 border-b">Temperature (°C)</td>
-                        <td class="p-3 border-b">{{ temp_avg }}</td>
-                        <td class="p-3 border-b">{{ temp_min }}</td>
-                        <td class="p-3 border-b">{{ temp_max }}</td>
-                    </tr>
-                    <tr class="hover:bg-gray-800">
-                        <td class="p-3 border-b">Humidity (%)</td>
-                        <td class="p-3 border-b">{{ hum_avg }}</td>
-                        <td class="p-3 border-b">{{ hum_min }}</td>
-                        <td class="p-3 border-b">{{ hum_max }}</td>
-                    </tr>
-                    <tr class="hover:bg-gray-800">
-                        <td class="p-3 border-b">Turbidity (NTU)</td>
-                        <td class="p-3 border-b">{{ turb_avg }}</td>
-                        <td class="p-3 border-b">{{ turb_min }}</td>
-                        <td class="p-3 border-b">{{ turb_max }}</td>
-                    </tr>
-                    <tr class="hover:bg-gray-800">
-                        <td class="p-3 border-b">pH</td>
-                        <td class="p-3 border-b">{{ ph_avg }}</td>
-                        <td class="p-3 border-b">{{ ph_min }}</td>
-                        <td class="p-3 border-b">{{ ph_max }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex flex-col md:flex-row justify-center items-center gap-6">
-            <!-- Back to Analysis -->
-            <a href="{{ url_for('Analog') }}"
-                class="bg-blue-600 hover:bg-blue-700 !text-white font-semibold text-lg px-6 py-2 rounded-lg shadow border-2 border-blue-800 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 active:border-blue-400">
-                🔄 Back to Analysis
-            </a>
-
-            <!-- Download Report -->
-            <a href="{{ url_for('download_report') }}"
-                class="bg-green-600 hover:bg-green-700 !text-white font-semibold text-lg px-6 py-2 rounded-lg shadow border-2 border-green-800 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 active:border-green-400">
-                ⬇️ Download Report
-            </a>
-        </div>
-
-       {% endblock %}
+      <!-- Water Quality Card -->
+      <div class="card p-6 bg-gray-800 rounded-xl shadow hover:scale-105 transition-transform duration-300">
+        <h3 class="text-lg font-semibold mb-2 text-white">💧 Water Quality</h3>
+        <p id="quality_status" class="text-3xl font-bold text-green-400"></p>
+        <p class="text-gray-400 text-sm">Overall assessment based on all parameters</p>
+      </div>
     </div>
 
-    <!-- Optional: Add external JS files or libraries like Tailwind, AlpineJS, etc. -->
-    <!-- <script src="path/to/your/scripts.js"></script> -->
+    <!-- Detailed Metrics Table -->
+    <div class="overflow-x-auto mb-10">
+      <table class="table-auto w-full border-collapse bg-gray-900 rounded-lg shadow">
+        <thead>
+          <tr class="bg-gray-700 text-gray-200 uppercase text-sm tracking-wide">
+            <th class="p-3 border-b">Parameter</th>
+            <th class="p-3 border-b">Average</th>
+            <th class="p-3 border-b">Min</th>
+            <th class="p-3 border-b">Max</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-300">
+          <tr class="hover:bg-gray-800">
+            <td class="p-3 border-b">Temperature (°C)</td>
+            <td id="temp_avg_tbl" class="p-3 border-b"></td>
+            <td id="temp_min_tbl" class="p-3 border-b"></td>
+            <td id="temp_max_tbl" class="p-3 border-b"></td>
+          </tr>
+          <tr class="hover:bg-gray-800">
+            <td class="p-3 border-b">Humidity (%)</td>
+            <td id="hum_avg" class="p-3 border-b"></td>
+            <td id="hum_min" class="p-3 border-b"></td>
+            <td id="hum_max" class="p-3 border-b"></td>
+          </tr>
+          <tr class="hover:bg-gray-800">
+            <td class="p-3 border-b">Turbidity (NTU)</td>
+            <td id="turb_avg" class="p-3 border-b"></td>
+            <td id="turb_min" class="p-3 border-b"></td>
+            <td id="turb_max" class="p-3 border-b"></td>
+          </tr>
+          <tr class="hover:bg-gray-800">
+            <td class="p-3 border-b">pH</td>
+            <td id="ph_avg" class="p-3 border-b"></td>
+            <td id="ph_min" class="p-3 border-b"></td>
+            <td id="ph_max" class="p-3 border-b"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+      <button onclick="history.back()"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg px-6 py-2 rounded-lg shadow border-2 border-blue-800 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 active:border-blue-400">
+        🔄 Back to Analysis
+      </button>
+
+      <button onclick="downloadReport()"
+        class="bg-green-600 hover:bg-green-700 text-white font-semibold text-lg px-6 py-2 rounded-lg shadow border-2 border-green-800 transition-all duration-300 transform hover:scale-105 hover:shadow-lg active:scale-95 active:border-green-400">
+        ⬇️ Download Report
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // Example sensor data
+    const data = {
+      temp_avg: 27.3,
+      temp_min: 25.1,
+      temp_max: 30.2,
+      bact_avg: 320,
+      bact_min: 250,
+      bact_max: 400,
+      quality_status: "Good",
+      hum_avg: 61,
+      hum_min: 55,
+      hum_max: 68,
+      turb_avg: 2.3,
+      turb_min: 1.5,
+      turb_max: 3.1,
+      ph_avg: 7.2,
+      ph_min: 6.8,
+      ph_max: 7.5
+    };
+
+    // Fill values into HTML
+    document.getElementById("temp_avg").innerText = data.temp_avg + " °C";
+    document.getElementById("temp_min").innerText = data.temp_min;
+    document.getElementById("temp_max").innerText = data.temp_max;
+    document.getElementById("bact_avg").innerText = data.bact_avg + " CFU/mL";
+    document.getElementById("bact_min").innerText = data.bact_min;
+    document.getElementById("bact_max").innerText = data.bact_max;
+    document.getElementById("quality_status").innerText = data.quality_status;
+
+    // Table values
+    document.getElementById("temp_avg_tbl").innerText = data.temp_avg;
+    document.getElementById("temp_min_tbl").innerText = data.temp_min;
+    document.getElementById("temp_max_tbl").innerText = data.temp_max;
+    document.getElementById("hum_avg").innerText = data.hum_avg;
+    document.getElementById("hum_min").innerText = data.hum_min;
+    document.getElementById("hum_max").innerText = data.hum_max;
+    document.getElementById("turb_avg").innerText = data.turb_avg;
+    document.getElementById("turb_min").innerText = data.turb_min;
+    document.getElementById("turb_max").innerText = data.turb_max;
+    document.getElementById("ph_avg").innerText = data.ph_avg;
+    document.getElementById("ph_min").innerText = data.ph_min;
+    document.getElementById("ph_max").innerText = data.ph_max;
+
+    // Fake report download
+    function downloadReport() {
+      const report = JSON.stringify(data, null, 2);
+      const blob = new Blob([report], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "sensor_report.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
 </body>
-
 </html>
-
