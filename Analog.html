@@ -1,40 +1,238 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container text-center mt-5">
-  <h2 class="text-info">Analog</h2>
-  <p>Charts and Analog will be displayed here.</p>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analog Data Dashboard</title>
 
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-<div class="card col-span-1 lg:col-span-3">
-  <h3 class="text-lg font-medium mb-3">📊 Analysis</h3>
+  <!-- Chart.js and Gauge Plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-gauge@0.3.0/dist/chartjs-gauge.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
 
-  <div class="flex gap-4">
-    <div class="w-1/2">
-      <canvas id="temperatureTrend"></canvas>
+  <!-- Header -->
+  <div class="container mx-auto text-center mt-10">
+    <h2 class="text-3xl text-blue-600 font-bold mb-2">Analog</h2>
+    <p class="text-gray-600">Charts and Analog will be displayed here.</p>
+    <p id="clock" class="text-sm text-gray-500 mt-2"></p>
+  </div>
+
+  <!-- Mode Toggle -->
+  <div class="flex justify-center mt-4">
+    <label class="flex items-center gap-2 text-sm">
+      <input type="checkbox" id="modeToggle" class="form-checkbox">
+      Live Mode
+    </label>
+  </div>
+
+  <!-- Gauges -->
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+    <!-- Temperature Gauge -->
+    <div class="bg-white p-4 rounded shadow text-center">
+      <h3 class="font-medium mb-2">Temperature</h3>
+      <canvas id="temperatureGauge" height="150"></canvas>
+      <p class="mt-2 text-lg font-semibold text-blue-600" id="temperatureNumeric">-- °C</p>
     </div>
-    <div class="w-1/2">
-      <canvas id="bacteriaTrend"></canvas>
+
+    <!-- Bacteria Gauge -->
+    <div class="bg-white p-4 rounded shadow text-center">
+      <h3 class="font-medium mb-2">Bacteria Level</h3>
+      <canvas id="bacteriaGauge" height="150"></canvas>
+      <p class="mt-2 text-lg font-semibold text-red-600" id="bacteriaNumeric">-- CFU/mL</p>
     </div>
   </div>
 
-  <div class="mt-4 grid grid-cols-2 gap-4">
-    <div class="card p-3">
-      <h4 class="font-medium">Temperature Stats</h4>
-      <p>Avg: <span id="tempAvg">--</span> °C</p>
-      <p>Max: <span id="tempMax">--</span> °C</p>
-      <p>Min: <span id="tempMin">--</span> °C</p>
+  <!-- Charts Section -->
+  <div class="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+    <!-- Humidity -->
+    <div class="bg-white p-4 rounded shadow col-span-1">
+      <h4 class="font-medium mb-2">Humidity (%)</h4>
+      <canvas id="humidityChart" height="150"></canvas>
     </div>
-    <div class="card p-3">
-      <h4 class="font-medium">Bacteria Stats</h4>
-      <p>Avg: <span id="bactAvg">--</span> CFU/mL</p>
-      <p>Max: <span id="bactMax">--</span> CFU/mL</p>
-      <p>Min: <span id="bactMin">--</span> CFU/mL</p>
+
+    <!-- Turbidity -->
+    <div class="bg-white p-4 rounded shadow col-span-1">
+      <h4 class="font-medium mb-2">Turbidity (NTU)</h4>
+      <canvas id="turbidityChart" height="150"></canvas>
+    </div>
+
+    <!-- pH -->
+    <div class="bg-white p-4 rounded shadow col-span-1">
+      <h4 class="font-medium mb-2">pH Level</h4>
+      <canvas id="phChart" height="150"></canvas>
     </div>
   </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/chartjs-gauge"></script>
+  <!-- Analysis Section -->
+  <div class="container mx-auto bg-white shadow rounded-lg mt-10 p-6">
+    <h3 class="text-xl font-medium mb-4">📊 Analysis</h3>
 
-<script src="analys.js"></script>
+    <!-- Trend Charts -->
+    <div class="flex flex-col lg:flex-row gap-6">
+      <div class="w-full lg:w-1/2">
+        <canvas id="temperatureTrend" height="150"></canvas>
+      </div>
+      <div class="w-full lg:w-1/2">
+        <canvas id="bacteriaTrend" height="150"></canvas>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <div class="p-4 bg-blue-100 rounded shadow">
+        <h4 class="font-medium text-blue-900">Temperature Stats</h4>
+        <p>Avg: <span id="tempAvg">--</span> °C</p>
+        <p>Max: <span id="tempMax">--</span> °C</p>
+        <p>Min: <span id="tempMin">--</span> °C</p>
+      </div>
+      <div class="p-4 bg-red-100 rounded shadow">
+        <h4 class="font-medium text-red-900">Bacteria Stats</h4>
+        <p>Avg: <span id="bactAvg">--</span> CFU/mL</p>
+        <p>Max: <span id="bactMax">--</span> CFU/mL</p>
+        <p>Min: <span id="bactMin">--</span> CFU/mL</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- All JavaScript -->
+  <script>
+    // Historical data
+    let temperatureHistory = [], humidityHistory = [], turbidityHistory = [], phHistory = [], bacteriaHistory = [];
+    const maxHistory = 20;
+
+    // Chart setups
+    const tempCtx = document.getElementById('temperatureGauge').getContext('2d');
+    const temperatureGauge = new Chart(tempCtx, {
+      type: 'doughnut',
+      data: { labels: ['Temp', 'Remaining'], datasets: [{ data: [0, 50], backgroundColor: ['#3b82f6', '#1f2937'], borderWidth: 0 }] },
+      options: { rotation: -90, circumference: 180, cutout: '70%', plugins: { legend: { display: false } }, animation: { animateRotate: true, duration: 1000 } }
+    });
+
+    const bactCtx = document.getElementById('bacteriaGauge').getContext('2d');
+    const bacteriaGauge = new Chart(bactCtx, {
+      type: 'doughnut',
+      data: { labels: ['Bacteria', 'Remaining'], datasets: [{ data: [0, 500], backgroundColor: ['#ef4444', '#1f2937'], borderWidth: 0 }] },
+      options: { rotation: -90, circumference: 180, cutout: '70%', plugins: { legend: { display: false } }, animation: { animateRotate: true, duration: 1000 } }
+    });
+
+    const humCtx = document.getElementById('humidityChart').getContext('2d');
+    const humidityChart = new Chart(humCtx, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Humidity %', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.2)', tension: 0.4, fill: true, pointRadius: 4 }] },
+      options: { responsive: true, scales: { y: { min: 0, max: 100 }, x: {} }, plugins: { legend: { display: false } } }
+    });
+
+    const turbCtx = document.getElementById('turbidityChart').getContext('2d');
+    const turbidityChart = new Chart(turbCtx, {
+      type: 'bar',
+      data: { labels: ['Current'], datasets: [{ label: 'Turbidity NTU', data: [0], backgroundColor: '#f59e0b' }] },
+      options: { scales: { y: { min: 0, max: 100 }, x: { display: false } }, plugins: { legend: { display: false } } }
+    });
+
+    const phCtx = document.getElementById('phChart').getContext('2d');
+    const phChart = new Chart(phCtx, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'pH', data: [], borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.2)', tension: 0.4, fill: true, pointRadius: 4 }] },
+      options: { scales: { y: { min: 0, max: 14 }, x: {} }, plugins: { legend: { display: false } } }
+    });
+
+    const tempTrendCtx = document.getElementById('temperatureTrend').getContext('2d');
+    const tempTrendChart = new Chart(tempTrendCtx, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Temperature °C', data: [], borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.2)', tension: 0.4, fill: true }] }
+    });
+
+    const bactTrendCtx = document.getElementById('bacteriaTrend').getContext('2d');
+    const bactTrendChart = new Chart(bactTrendCtx, {
+      type: 'line',
+      data: { labels: [], datasets: [{ label: 'Bacteria CFU/mL', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.2)', tension: 0.4, fill: true }] }
+    });
+
+    // Data generation/fetch
+    function generateRandomData() {
+      return {
+        temperature: Math.floor(Math.random() * 50),
+        humidity: Math.floor(Math.random() * 100),
+        turbidity: Math.floor(Math.random() * 100),
+        ph: (Math.random() * 2 + 6.5).toFixed(1),
+        bacteria: Math.floor(Math.random() * 500)
+      };
+    }
+
+    async function fetchSensorData() {
+      try {
+        const response = await fetch('/api/sensor'); // Replace with real endpoint
+        return await response.json();
+      } catch (e) {
+        return generateRandomData(); // fallback
+      }
+    }
+
+    function updateDashboard(data) {
+      // Update gauges
+      temperatureGauge.data.datasets[0].data = [data.temperature, 50 - data.temperature];
+      temperatureGauge.update();
+      document.getElementById('temperatureNumeric').textContent = `${data.temperature} °C`;
+
+      bacteriaGauge.data.datasets[0].data = [data.bacteria, 500 - data.bacteria];
+      bacteriaGauge.update();
+      document.getElementById('bacteriaNumeric').textContent = `${data.bacteria} CFU/mL`;
+
+      // Update histories
+      appendHistory(temperatureHistory, data.temperature);
+      appendHistory(humidityHistory, data.humidity);
+      appendHistory(turbidityHistory, data.turbidity);
+      appendHistory(phHistory, parseFloat(data.ph));
+      appendHistory(bacteriaHistory, data.bacteria);
+
+      updateLineChart(humidityChart, humidityHistory);
+      updateBarChart(turbidityChart, data.turbidity);
+      updateLineChart(phChart, phHistory);
+      updateLineChart(tempTrendChart, temperatureHistory);
+      updateLineChart(bactTrendChart, bacteriaHistory);
+
+      updateStats('tempAvg', 'tempMax', 'tempMin', temperatureHistory);
+      updateStats('bactAvg', 'bactMax', 'bactMin', bacteriaHistory);
+    }
+
+    function appendHistory(arr, value) {
+      arr.push(value);
+      if (arr.length > maxHistory) arr.shift();
+    }
+
+    function updateLineChart(chart, data) {
+      chart.data.labels = data.map((_, i) => i + 1);
+      chart.data.datasets[0].data = data;
+      chart.update();
+    }
+
+    function updateBarChart(chart, value) {
+      chart.data.datasets[0].data = [value];
+      chart.update();
+    }
+
+    function updateStats(avgId, maxId, minId, data) {
+      if (data.length === 0) return;
+      document.getElementById(avgId).textContent = (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1);
+      document.getElementById(maxId).textContent = Math.max(...data);
+      document.getElementById(minId).textContent = Math.min(...data);
+    }
+
+    // Loop
+    const modeToggle = document.getElementById('modeToggle');
+    setInterval(async () => {
+      const data = modeToggle.checked ? await fetchSensorData() : generateRandomData();
+      updateDashboard(data);
+    }, 5000);
+
+    // Clock
+    setInterval(() => {
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+    }, 1000);
+  </script>
+</body>
+</html>
